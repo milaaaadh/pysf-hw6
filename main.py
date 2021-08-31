@@ -6,41 +6,44 @@ from MatchGame import *
 # csr : Coordinates second row
 
 
-x , y = input ( 'enter your table size by two number: ' ).split ( )
-x , y = int ( x ) , int ( y )
-while (x * y) % 2 != 0 :
+row , column = input ( 'enter your table size by two number: ' ).split ( )
+row , column = int ( row ) , int ( column )
+while (row * column) % 2 != 0 :
     print ( 'Enter at least one of the numbers evenly' )
-    x , y = input ( 'enter your table size by two number: ' ).split ( )
-    x , y = int ( x ) , int ( y )
+    row , column = input ( 'enter your table size by two number: ' ).split ( )
+    row , column = int ( row ) , int ( column )
 
 min_value , max_value = input ( 'enter your min, max value of table: ' ).split ( )
 min_value , max_value = int ( min_value ) , int ( max_value )
 if min_value > max_value :
     min_value , max_value = max_value , min_value
-primary_table = MatchGame.creat_primary_table ( x , y )
-random_table = MatchGame.creat_random_table ( min_value , max_value , x , y )
+
+a = MatchGame(min_value,max_value,row,column)
+primary_table = a.primary_table
+a.creat_random_table()
+random_table = a.random_table
+
 
 # while primary_table != random_table:
 while primary_table.dtype != 'int64' :
-    print ( MatchGame.show_table ( primary_table ) )
+    a.show_table()
 
-    cfr , cfc = MatchGame.get_location ( 'first' , x , y )
-
-    csr , csc = MatchGame.get_location ( 'second' , x , y )
+    cfr , cfc = a.get_location ('first')
+    csr , csc = a.get_location ( 'second' )
 
     if random_table [ cfr ] [ cfc ] == random_table [ csr ] [ csc ] :
-        MatchGame.correct_guess ( )
+        a.correct_guess ( )
         primary_table [ cfr ] [ cfc ] = random_table [ cfr ] [ cfc ]
         primary_table [ csr ] [ csc ] = random_table [ csr ] [ csc ]
+        a.primary_table = primary_table
     else :
-        MatchGame.bad_guess ( random_table [ cfr ] [ cfc ] , random_table [ csr ] [ csc ] , (cfr + 1 , cfc + 1) ,
-                              (csr + 1 , csc + 1) )
+        a.bad_guess(random_table[cfr][cfc], random_table[csr][csc], (cfr + 1 , cfc + 1), (csr + 1 , csc + 1))
     try :
         primary_table = primary_table.astype ( int )
     except :
         print ( '' )
 
-print ( MatchGame.show_table ( primary_table ) )
+print ( a.show_table () )
 print ( 'Great job! The table is complete' )
 
 
