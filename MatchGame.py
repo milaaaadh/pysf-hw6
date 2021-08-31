@@ -1,27 +1,26 @@
 import numpy as np
-from tkinter import *
 
 
 class MatchGame :
-    """
-    A simple game to challenge your memory
-    I used the tips of a website to better design a work
-    See at : https://b2n.ir/q92597
-    """
 
-    def creat_primary_table ( x , y ) :
-        """
-        creat a primary table for show True guesses
-        set size by x,y value
-        @type x,y: int, int
-        @rtype: return a numpy array
-        """
+    def __init__ ( self , min , max , row , column , random_table=[ [ ] ] ) :
+        self.min = min
+        self.max = max
+        self.row = row
+        self.column = column
+        self.primary_table = np.full ( (row , column) , '*' )
+        self.random_table = random_table
 
-        primary_array = np.full ( (x , y) , '*' )
+    def creat_random_table ( self ) :
+        first_table = np.random.randint ( self.min , self.max+1 , size=self.row * self.column // 2 )
+        first_table = np.repeat ( first_table , 2 )
+        np.random.shuffle ( first_table )
+        random_table = first_table.reshape ( self.row , self.column )
+        self.random_table = random_table
 
-        return primary_array
+        # when use class then use a.creat_random_table() for creat random table
 
-    def show_table ( array ) :
+    def show_table ( self ) :
         """
         Show a table based on guessed or un guessed elements
         Give an array
@@ -29,51 +28,40 @@ class MatchGame :
         @rtype: only show a schematic of conjectures and nothing for return
         """
 
-        x , y = array.shape
         print ( end='    ' )
-        for i in range ( y ) :
+        for i in range ( self.column ) :
             print ( '' , i + 1 , end=' ' )
         print ( '' )
-        print ( '   ' , '_' * (y * 3) )
-        for j in range ( x ) :
-            print ( '' , j + 1 , end=' |' )
-            for i in range ( y ) :
-                print ( '' , array [ j ] [ i ] , end=' ' )
+        print ( '   ' , '_' * (self.column * 3) )
+        for j in range ( self.row) :
+            print ( '' , j+1  , end=' |' )
+            for i in range (self.column ) :
+                print ( '' , self.primary_table [ j ] [ i ] , end=' ' )
             print ( )
 
         return ('')
+        # you can show table when use a.show_table()
 
-    def creat_random_table ( min_value , max_value , x , y ) :
-        """
-        Give min, max value and row and column
-        You should give a x,y that x*y//2 because repetition of each number must be even
-        Creat a random table for guesse
-        @type min_value,max_value,x,y: int, int, int, int
-        @rtype: numpy random
-        """
-
-        first_table = np.random.randint ( min_value , max_value , size=x * y // 2 )
-        first_table = np.repeat ( first_table , 2 )
-        np.random.shuffle ( first_table )
-        random_table = first_table.reshape ( x , y )
-
-        return random_table
-
-    def bad_guess ( a , b , aa , bb ) :
+    def bad_guess (self, a , b , aa , bb ) :
 
         print ( f'Not an identical pair. Found {a} at {aa} and {b} at {bb}' )
 
-    def correct_guess () :
+    def correct_guess (self) :
 
         print ( f'good guess' )
 
-    def get_location ( round , r , c ) :
+    def get_location ( self, round) :
         x , y = input ( f'Enter coordinates for {round} card:' ).split ( )
-        x , y = int ( x ) , int ( y )
-        while x > r or y > c or x < 1 or y < 1 :
-            print ( f'your location out of range (table size is {r}*{c})' )
+        x , y = int ( x )-1 , int ( y )-1
+
+
+        while x > self.row or y > self.column or x < 0 or y < 0 :
+            print ( f'your location out of range (table size is {self.row}*{self.column})' )
             x , y = input ( f'Enter coordinates for {round} card:' ).split ( )
-            x , y = int ( x ) , int ( y )
-        return int ( x ) - 1 , int ( y ) - 1
+            x , y = int ( x )-1 , int ( y )-1
+
+        return x , y
+
+
 
 
